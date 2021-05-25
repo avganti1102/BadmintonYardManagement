@@ -1,4 +1,4 @@
-package com.vti.pointserver.controller;
+package com.project.bymanagement.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -6,18 +6,16 @@ public class AccountDTO {
     private String fullName;
     private String phone;
     private String address;
-    private String role;
 
     public AccountDTO() {
     }
 
-    public AccountDTO(Integer accountId, String accountName, String fullName, String phone, String address, String role) {
+    public AccountDTO(Integer accountId, String accountName, String fullName, String phone, String address) {
         this.accountId = accountId;
         this.accountName = accountName;
         this.fullName = fullName;
         this.phone = phone;
         this.address = address;
-        this.role = role;
     }
 
     public Integer getAccountId() {
@@ -58,13 +56,5 @@ public class AccountDTO {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }

@@ -16,7 +16,7 @@ public class Account implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer accountId;
+    private Integer id;
 
     @Column(name = "`accountName`", length = 15)
     private String accountName;
@@ -24,16 +24,16 @@ public class Account implements Serializable {
     @Column(name = "`password`", length = 15)
     private String passWord;
 
-    @Column(name = "`firstName`", nullable = false, length = 50)
+    @Column(name = "`firstName`", length = 50)
     private String firstName;
 
-    @Column(name = "`lastName`", nullable = false, length = 50)
+    @Column(name = "`lastName`", length = 50)
     private String lastName;
 
     @Formula("concat(firstName, ' ', lastName)")
     private String fullName;
 
-    @Column(name = "role", nullable = false)
+    @Column(name = "role")
     private String role;
 
     @Column(name = "phone", length = 15)
@@ -63,12 +63,12 @@ public class Account implements Serializable {
         this.services = services;
     }
 
-    public Integer getAccountId() {
-        return accountId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public List<BookYard> getBookYards() {

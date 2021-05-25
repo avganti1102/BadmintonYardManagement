@@ -29,4 +29,50 @@ public class CategoryService implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "categoryServiceId")
     @JsonIgnore
     private List<Services> services = new ArrayList<>();
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getCategoryService() {
+        return categoryService;
+    }
+
+    public void setCategoryService(String categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public Integer getStorage() {
+        return storage;
+    }
+
+    public void setStorage(Integer storage) {
+        this.storage = storage;
+    }
+
+    public List<Services> getServices() {
+        return services;
+    }
+
+    public void setServices(List<Services> services) {
+        this.services = services;
+    }
+
+    public void setInforUpdateStorage(CategoryService categoryServiceUpdate) {
+        this.categoryService = categoryServiceUpdate.getCategoryService();
+        this.price = categoryServiceUpdate.getPrice();
+        this.storage = categoryServiceUpdate.getStorage();
+    }
 }
