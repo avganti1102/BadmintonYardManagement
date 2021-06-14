@@ -2,21 +2,27 @@ package com.project.bymanagement.login;
 
 import com.project.bymanagement.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
-
-@Component
-@EnableWebSecurity
+@Configuration
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AccountService service;
+
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -25,15 +31,26 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/admin").hasAnyAuthority("ADMIN")
-                .antMatchers("/api/v1/manager").hasAnyAuthority("ADMIN", "MANAGE")
-                .antMatchers("/api/v1/login").anonymous()
+                .antMatchers(
+                        "/registration**",
+                        "/js/**",
+                        "/css/**",
+                        "/img/**",
+                        "/webjars/**").permitAll()
+                .antMatchers("/", "/home", "/about").permitAll()
+                .antMatchers("/admin**").hasAnyAuthority("ADMIN")
+                .antMatchers("/user**").hasAnyAuthority("MANAGE", "USER")
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic()
+                .formLogin()
+                .loginPage("/login")
+                .permitAll()
                 .and()
-                .csrf().disable();
+                .logout()
+                .permitAll()
+                .and()
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
     }
 }

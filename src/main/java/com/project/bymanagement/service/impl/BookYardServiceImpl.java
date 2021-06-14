@@ -18,7 +18,7 @@ public class BookYardServiceImpl implements BookYardService {
     private BookYardRepository bookYardRepository;
 
     @Override
-    public List<BookYard> getAllBookHistory(Integer accountId) {
+    public List<BookYard> getAllBookingHistory(Integer accountId) {
         return bookYardRepository.findAllByAccountId(accountId);
     }
 }

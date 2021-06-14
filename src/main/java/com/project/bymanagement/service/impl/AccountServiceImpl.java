@@ -1,6 +1,6 @@
 package com.project.bymanagement.service.impl;
 
-import com.project.bymanagement.model.dto.AccountDTO;
+import com.project.bymanagement.model.dto.AccountRegistrationDto;
 import com.project.bymanagement.model.dto.ResponseModelDTO;
 import com.project.bymanagement.model.entity.Account;
 import com.project.bymanagement.repository.AccountRepository;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,19 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private SourceMessageUtils sourceMessageUtils;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Override
+    public Account findByAccountName(String name) {
+        return accountRepository.findByAccountName(name);
+    }
+
+    @Override
+    public Account findByPhone(String phone) {
+        return accountRepository.findByPhone(phone);
+    }
 
     @Override
     public List<Account> getAllAccount() {
@@ -42,13 +56,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public ResponseEntity createAccount(Account account) {
-        if (accountRepository.countAllByAccountName(account.getAccountName()) > 0) {
+    public ResponseEntity createAccount(AccountRegistrationDto registrationDto) {
+        if (accountRepository.countAllByAccountName(registrationDto.getAccountName()) > 0) {
             ResponseModelDTO<?> responseModelDTO = new ResponseModelDTO(HttpStatus.BAD_REQUEST, sourceMessageUtils.getMessage("Ten da ton tai"), null);
             return ResponseEntity.badRequest().body(responseModelDTO);
         }
+        Account account = new Account();
+        account.setAccountName(registrationDto.getAccountName());
+        account.setPhone(registrationDto.getPhone());
+        account.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        account.setRole("USER");
 
-        ResponseModelDTO<AccountDTO> responseModelDTO = new ResponseModelDTO(HttpStatus.OK, "CREATE SUCCESS", accountRepository.save(account));
+        ResponseModelDTO<AccountRegistrationDto> responseModelDTO = new ResponseModelDTO(HttpStatus.OK, "CREATE SUCCESS", accountRepository.save(account));
         return ResponseEntity.ok(responseModelDTO);
     }
 
@@ -84,13 +103,26 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public ResponseEntity<?> deleteAccount(Integer id) {
         Optional<Account> account = accountRepository.findById(id);
+        if (account.isPresent() && account.get().getRole() != "ADMIN") {
+            ResponseModelDTO<?> responseModelDTO;
+            accountRepository.delete(account.get());
+            responseModelDTO = new ResponseModelDTO(HttpStatus.OK, "Success", null);
+            return ResponseEntity.ok(responseModelDTO);
+        } else {
+            return ResponseEntity.badRequest().body("NOT_AUTHORIZE");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteAccountByAdmin(Integer id) {
+        Optional<Account> account = accountRepository.findById(id);
         if (account.isPresent()) {
             ResponseModelDTO<?> responseModelDTO;
             accountRepository.delete(account.get());
             responseModelDTO = new ResponseModelDTO(HttpStatus.OK, "Success", null);
             return ResponseEntity.ok(responseModelDTO);
         } else {
-            return ResponseEntity.badRequest().body("NOT_FOUND");
+            return ResponseEntity.badRequest().body("NOT_AUTHORIZE");
         }
     }
 
@@ -104,7 +136,7 @@ public class AccountServiceImpl implements AccountService {
 
         return new org.springframework.security.core.userdetails.User(
                 account.getAccountName(),
-                account.getPassWord(),
+                account.getPassword(),
                 AuthorityUtils.createAuthorityList(account.getRole()));
     }
 }

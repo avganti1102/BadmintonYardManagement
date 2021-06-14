@@ -22,7 +22,7 @@ public class Account implements Serializable {
     private String accountName;
 
     @Column(name = "`password`", length = 15)
-    private String passWord;
+    private String password;
 
     @Column(name = "`firstName`", length = 50)
     private String firstName;
@@ -87,12 +87,12 @@ public class Account implements Serializable {
         this.accountName = accountName;
     }
 
-    public String getPassWord() {
-        return passWord;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPassWord(String passWord) {
-        this.passWord = passWord;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFirstName() {

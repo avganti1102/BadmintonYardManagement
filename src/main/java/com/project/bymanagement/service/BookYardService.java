@@ -5,5 +5,5 @@ import com.project.bymanagement.model.entity.BookYard;
 import java.util.List;
 
 public interface BookYardService {
-    List<BookYard> getAllBookHistory(Integer accountId);
+    List<BookYard> getAllBookingHistory(Integer accountId);
 }
