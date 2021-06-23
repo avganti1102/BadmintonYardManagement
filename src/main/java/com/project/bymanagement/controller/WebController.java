@@ -24,7 +24,7 @@ public class WebController {
         return "admin";
     }
 
-    @GetMapping("/user")
+    @GetMapping("/customer")
     public String user() {
         return "user";
     }
@@ -42,6 +42,11 @@ public class WebController {
     @GetMapping("/403")
     public String error403() {
         return "error/403";
+    }
+
+    @GetMapping("/list-account")
+    public String listAccount() {
+        return "account";
     }
 
 }
